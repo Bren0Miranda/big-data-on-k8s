@@ -1,24 +1,24 @@
 ```sh
 # connect into k8s cluster
-kubectx aks-owshq-dev
+kubectx kind-mlops
 
 # create namespaces
-k create namespace orchestrator
-k create namespace database
-k create namespace ingestion
-k create namespace processing
-k create namespace datastore
-k create namespace deepstorage
-k create namespace tracing
-k create namespace logging
-k create namespace monitoring
-k create namespace viz
-k create namespace cicd
-k create namespace app
-k create namespace cost
-k create namespace misc
-k create namespace dataops
-k create namespace gateway
+kubectl create namespace orchestrator
+kubectl create namespace database
+kubectl create namespace ingestion
+kubectl create namespace processing
+kubectl create namespace datastore
+kubectl create namespace deepstorage
+kubectl create namespace tracing
+kubectl create namespace logging
+kubectl create namespace monitoring
+kubectl create namespace viz
+kubectl create namespace cicd
+kubectl create namespace app
+kubectl create namespace cost
+kubectl create namespace misc
+kubectl create namespace dataops
+kubectl create namespace gateway
 
 # add & update helm list repos
 helm repo add argo https://argoproj.github.io/argo-helm
@@ -28,11 +28,15 @@ helm repo update
 # argo-cd
 # https://artifacthub.io/packages/helm/argo/argo-cd
 # https://github.com/argoproj/argo-helm
-helm install argocd argo/argo-cd --namespace cicd --version 3.26.8
+helm install argocd argo/argo-cd --namespace cicd --version 5.17.1
+kubectl get pod --namespace cicd
+kubectl get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+kubectl port-forward service/argocd-server -n cicd 8080:443
 
 # install argo-cd [gitops]
 # create a load balancer
-k patch svc argocd-server -n cicd -p '{"spec": {"type": "LoadBalancer"}}'
+#kubectl patch service argocd-server -n cicd -p '{"spec": {"type": "LoadBalancer"}}'
 
 # retrieve load balancer ip
 # load balancer = 20.69.223.133
@@ -44,10 +48,10 @@ ARGOCD_LB="20.69.223.133"
 kubens cicd && k get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d | xargs -t -I {} argocd login $ARGOCD_LB --username admin --password {} --insecure
 
 # create cluster role binding for admin user [sa]
-k create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=system:serviceaccount:cicd:argocd-application-controller -n cicd
+kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=system:serviceaccount:cicd:argocd-application-controller -n cicd
 
 # register cluster
-CLUSTER="aks-owshq-dev"
+CLUSTER="kind-mlops"
 argocd cluster add $CLUSTER --in-cluster
 
 # add repo into argo-cd repositories
@@ -65,7 +69,8 @@ helm repo add strimzi https://strimzi.io/charts/
 helm repo update
 
 # strimzi
-helm install kafka strimzi/strimzi-kafka-operator --namespace ingestion --version 0.26.0
+helm install kafka strimzi/strimzi-kafka-operator --namespace ingestion --version 0.32.0
+kubectl get pod --namespace ingestion
 
 # spark
 helm install spark spark-operator/spark-operator --namespace processing --set image.tag=v1beta2-1.3.0-3.1.1
