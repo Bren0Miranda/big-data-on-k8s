@@ -55,7 +55,7 @@ CLUSTER="kind-mlops"
 argocd cluster add $CLUSTER --in-cluster
 
 # add repo into argo-cd repositories
-REPOSITORY="https://bitbucket.org/owshq/big-data-on-k8s.git"
+REPOSITORY="git@github.com:Bren0Miranda/ws-mds-na-pratica.git"
 argocd repo add $REPOSITORY --username [NAME] --password [PWD] --port-forward
 ```
 
