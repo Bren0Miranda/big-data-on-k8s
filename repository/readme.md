@@ -45,7 +45,7 @@ kubens cicd && kubectl get services -l app.kubernetes.io/name=argocd-server,app.
 # get password to log into argocd portal
 # argocd login 20.69.223.133 --username admin --password PafATjllzVYkv6tC --insecure
 ARGOCD_LB="20.69.223.133"
-kubens cicd && k get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d | xargs -t -I {} argocd login $ARGOCD_LB --username admin --password {} --insecure
+kubens cicd && kubens cicd && k get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d | xargs -t -I {} argocd login $ARGOCD_LB --username admin --password {} --insecure
 
 # create cluster role binding for admin user [sa]
 kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=system:serviceaccount:cicd:argocd-application-controller -n cicd
@@ -55,7 +55,7 @@ CLUSTER="kind-mlops"
 argocd cluster add $CLUSTER --in-cluster
 
 # add repo into argo-cd repositories
-REPOSITORY="git@github.com:Bren0Miranda/ws-mds-na-pratica.git"
+REPOSITORY="https://github.com/Bren0Miranda/big-data-on-k8s.git"
 argocd repo add $REPOSITORY --username [NAME] --password [PWD] --port-forward
 ```
 
@@ -76,57 +76,57 @@ kubectl get pod --namespace ingestion
 helm install spark spark-operator/spark-operator --namespace processing --set image.tag=v1beta2-1.3.0-3.1.1
 
 # config maps
-k apply -f repository/yamls/ingestion/metrics/kafka-metrics-config.yaml
-k apply -f repository/yamls/ingestion/metrics/zookeeper-metrics-config.yaml
-k apply -f repository/yamls/ingestion/metrics/connect-metrics-config.yaml
-k apply -f repository/yamls/ingestion/metrics/cruise-control-metrics-config.yaml
+kubectl apply -f repository/yamls/ingestion/metrics/kafka-metrics-config.yaml
+kubectl apply -f repository/yamls/ingestion/metrics/zookeeper-metrics-config.yaml
+kubectl apply -f repository/yamls/ingestion/metrics/connect-metrics-config.yaml
+kubectl apply -f repository/yamls/ingestion/metrics/cruise-control-metrics-config.yaml
 
 # ingestion
-k apply -f repository/app-manifests/ingestion/kafka-broker.yaml
-k apply -f repository/app-manifests/ingestion/schema-registry.yaml
-k apply -f repository/app-manifests/ingestion/kafka-connect.yaml
-k apply -f repository/app-manifests/ingestion/cruise-control.yaml
-k apply -f repository/app-manifests/ingestion/kafka-connectors.yaml
+kubectl apply -f repository/app-manifests/ingestion/kafka-broker.yaml
+kubectl apply -f repository/app-manifests/ingestion/schema-registry.yaml
+kubectl apply -f repository/app-manifests/ingestion/kafka-connect.yaml
+kubectl apply -f repository/app-manifests/ingestion/cruise-control.yaml
+kubectl apply -f repository/app-manifests/ingestion/kafka-connectors.yaml
 
 # databases
-k apply -f repository/app-manifests/database/mssql.yaml
-k apply -f repository/app-manifests/database/mysql.yaml
-k apply -f repository/app-manifests/database/postgres.yaml
-k apply -f repository/app-manifests/database/mongodb.yaml
-k apply -f repository/app-manifests/database/yugabytedb.yaml
+kubectl apply -f repository/app-manifests/database/mssql.yaml
+kubectl apply -f repository/app-manifests/database/mysql.yaml
+kubectl apply -f repository/app-manifests/database/postgres.yaml
+kubectl apply -f repository/app-manifests/database/mongodb.yaml
+kubectl apply -f repository/app-manifests/database/yugabytedb.yaml
 
 # deep storage
-k apply -f repository/app-manifests/deepstorage/minio-operator.yaml
+kubectl apply -f repository/app-manifests/deepstorage/minio-operator.yaml
 
 # datastore
-k apply -f repository/app-manifests/datastore/pinot.yaml
+kubectl apply -f repository/app-manifests/datastore/pinot.yaml
 
 # processing
-k apply -f repository/app-manifests/processing/ksqldb.yaml
-k apply -f repository/app-manifests/processing/trino.yaml
+kubectl apply -f repository/app-manifests/processing/ksqldb.yaml
+kubectl apply -f repository/app-manifests/processing/trino.yaml
 
 # orchestrator
-k apply -f repository/app-manifests/orchestrator/airflow.yaml
+kubectl apply -f repository/app-manifests/orchestrator/airflow.yaml
 
 # data ops
-k apply -f repository/app-manifests/lenses/lenses.yaml
+kubectl apply -f repository/app-manifests/lenses/lenses.yaml
 
 # monitoring
-k apply -f repository/app-manifests/monitoring/prometheus-alertmanager-grafana-botkube.yaml
+kubectl apply -f repository/app-manifests/monitoring/prometheus-alertmanager-grafana-botkube.yaml
 
 # logging
-k apply -f repository/app-manifests/logging/elasticsearch.yaml
-k apply -f repository/app-manifests/logging/filebeat.yaml
-k apply -f repository/app-manifests/logging/kibana.yaml
+kubectl apply -f repository/app-manifests/logging/elasticsearch.yaml
+kubectl apply -f repository/app-manifests/logging/filebeat.yaml
+kubectl apply -f repository/app-manifests/logging/kibana.yaml
 
 # cost
-k apply -f repository/app-manifests/cost/kubecost.yaml
+kubectl apply -f repository/app-manifests/cost/kubecost.yaml
 
 # load balancer
-k apply -f repository/app-manifests/misc/load-balancers-svc.yaml
+kubectl apply -f repository/app-manifests/misc/load-balancers-svc.yaml
 
 # deployed apps
-k get applications -n cicd
+kubectl get applications -n cicd
 
 # housekeeping
 helm delete argocd -n cicd

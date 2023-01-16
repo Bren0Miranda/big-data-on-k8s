@@ -4,6 +4,7 @@ install-python-venv:
 	sudo apt install python3.10-venv -y
 	python3 -m venv .venv
 	source .venv/bin/activate
+	pip install --no-cache-dir -r requirement.txt
 
 install-poetry:
 	curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
@@ -39,18 +40,28 @@ install-argo-cli:
 
 kind-cluster-create:
 	kind create cluster --config kind-config.yaml
-	kubectl cluster-info --context kind-mlops
+	kubectl get nodes --context kind-mlops
+
+kind-cluster-delete:
+	kind delete cluster --name mlops
 
 k8s-cicd-install:
 	helm repo add argo https://argoproj.github.io/argo-helm
 	helm repo update
 	kubectl create namespace cicd
 	helm install argocd argo/argo-cd --namespace cicd --version 5.17.1
-	kubectl get services --namespace ingestion
+	kubectl get services --namespace cicd
 
 k8s-cicd-config:
 	kubectl -n cicd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+	H6BzNFVeCINX0ZRA
+
+
+k8s-cicd-config-repository:
 	argocd cluster add kind-mlops --in-cluster -y
+	# add repo into argo-cd repositories
+	REPOSITORY="https://github.com/Bren0Miranda/big-data-on-k8s.git"
+	argocd repo add $REPOSITORY --username admin --password T9IsZr0hXY1tkA21 --port-forward
 
 k8s-ingestion-install:
 	helm repo add strimzi https://strimzi.io/charts/
@@ -72,3 +83,4 @@ k8s-ingestion-config-ingestion:
 	kubectl apply -f repository/app-manifests/ingestion/kafka-connect.yaml
 	kubectl apply -f repository/app-manifests/ingestion/cruise-control.yaml
 	kubectl apply -f repository/app-manifests/ingestion/kafka-connectors.yaml
+
