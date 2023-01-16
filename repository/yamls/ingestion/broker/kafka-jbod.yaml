@@ -87,7 +87,7 @@ spec:
       valueFrom:
         configMapKeyRef:
           name: zookeeper-metrics
-          key: zookeeper-metrics-config.yaml
+          key: zookeeper-metrics-config.yml
   entityOperator:
     topicOperator: {}
     userOperator: {}
