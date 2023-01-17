@@ -54,7 +54,7 @@ k8s-cicd-install:
 
 k8s-cicd-config:
 	kubectl -n cicd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-	H6BzNFVeCINX0ZRA
+	f3l-SWi13ayyxm9J	
 
 
 k8s-cicd-config-repository:
