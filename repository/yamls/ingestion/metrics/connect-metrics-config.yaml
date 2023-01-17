@@ -6,7 +6,7 @@ metadata:
     app: strimzi
 data:
   metrics-config.yml: |
-    # Inspired by kafka-connect rules
+     # Inspired by kafka-connect rules
     # https://github.com/prometheus/jmx_exporter/blob/master/example_configs/kafka-connect.yml
     # See https://github.com/prometheus/jmx_exporter for more info about JMX Prometheus Exporter metrics
     lowercaseOutputName: true
@@ -91,7 +91,7 @@ data:
     #kafka.connect:type=source-task-metrics,connector="{connector}",task="{task}"
     #kafka.connect:type=sink-task-metrics,connector="{connector}",task="{task}"
     #kafka.connect:type=connector-task-metrics,connector="{connector}",task="{task}"
-    - pattern: kafka.connect<type=(.+)-metrics, connector=(.+), task=(.+)><>(.+-total|.+-count|.+-ms|.+-ratio|.+-avg|.+-failures|.+-requests|.+-timestamp|.+-logged|.+-errors|.+-retries|.+-skipped)
+    - pattern: kafka.connect<type=(.+)-metrics, connector=(.+), task=(.+)><>(.+-total|.+-count|.+-ms|.+-ratio|.+-seq-no|.+-rate|.+-max|.+-avg|.+-failures|.+-requests|.+-timestamp|.+-logged|.+-errors|.+-retries|.+-skipped)
       name: kafka_connect_$1_$4
       labels:
         connector: "$2"
