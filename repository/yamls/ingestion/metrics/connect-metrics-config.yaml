@@ -6,7 +6,7 @@ metadata:
     app: strimzi
 data:
   metrics-config.yml: |
-     # Inspired by kafka-connect rules
+    # Inspired by kafka-connect rules
     # https://github.com/prometheus/jmx_exporter/blob/master/example_configs/kafka-connect.yml
     # See https://github.com/prometheus/jmx_exporter for more info about JMX Prometheus Exporter metrics
     lowercaseOutputName: true
